@@ -45,11 +45,8 @@ graph TD
     classDef external fill:#d0021b,stroke:#333,stroke-width:2px,color:white,font-weight:bold
     classDef subgraphStyle fill:#f8f9fa,stroke:#333,stroke-width:1px,color:#333
 
-    %% Client Layer
-    subgraph ClientLayer[Client Layer]
-        style ClientLayer subgraphStyle
-        Client[Client]
-    end
+    %% Main Nodes
+    Client[Client]
 
     %% API Layer
     subgraph APILayer[API Layer]
@@ -79,22 +76,22 @@ graph TD
         SMSProviderSecondary[SMS Provider Secondary]
     end
 
-    %% Main Flow with Directional Indicators
-    Client -->|1. Request OTP| APIGateway
-    APIGateway -->|2. Rate limit check| Redis
-    APIGateway -->|3. Forward request| OTPService
+    %% Main Flow
+    Client -->|Request OTP| APIGateway
+    APIGateway -->|Rate limit check| Redis
+    APIGateway -->|Forward request| OTPService
 
-    OTPService -->|4. Store OTP| Database
-    OTPService -->|5. Queue task| Queue
+    OTPService -->|Store OTP| Database
+    OTPService -->|Queue task| Queue
 
-    Queue -->|6. Process task| Worker
-    Worker -->|7. Check status| Redis
+    Queue -->|Process task| Worker
+    Worker -->|Check status| Redis
 
-    Worker -->|8. Send OTP| SMSProviderPrimary
-    Worker -.->|9. Fallback| SMSProviderSecondary
+    Worker -->|Send OTP| SMSProviderPrimary
+    Worker -.->|Fallback| SMSProviderSecondary
 
-    SMSProviderPrimary -->|10. Update status| Redis
-    SMSProviderSecondary -->|11. Update status| Redis
+    SMSProviderPrimary -->|Update status| Redis
+    SMSProviderSecondary -->|Update status| Redis
 
     %% Apply styles
     class Client,APIGateway primary
